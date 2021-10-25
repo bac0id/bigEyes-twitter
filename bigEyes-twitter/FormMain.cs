@@ -4,13 +4,12 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace BigEyes
-{
-	public partial class FormMain : Form
-	{
+namespace BigEyes {
+	public partial class FormMain : Form {
+
 		private const string FILENAME_SETTING = "Setting.txt";
 		private const string FILENAME_LOG = "Log.txt";
-		private int TaskNum { 
+		private int TaskNum {
 			get {
 				return this._taskNum;
 			}
@@ -48,17 +47,14 @@ namespace BigEyes
 
 		private void InitConfig() {
 			this.path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-			//把path转为数据流
 			byte[] array = Encoding.Default.GetBytes(path);
-			//以覆盖模式打开文件
 			FileStream fs = new FileStream(FILENAME_SETTING, FileMode.Create);
-			//写入数据流
 			fs.Write(array, 0, array.Length);
 			fs.Close();
 		}
 
 		private void NotifyIllegalInput() {
-			MessageBox.Show("当前剪贴板内容不是有效的输入！");
+			MessageBox.Show("当前剪贴板内容不是有效的输入！No legal url found in clipboard!");
 		}
 
 		private void btnOpen_Click(object sender, EventArgs e) {
@@ -105,6 +101,7 @@ namespace BigEyes
 		}
 
 		private void btnOptions_Click(object sender, EventArgs e) {
+			MessageBox.Show("设置保存图片路径。Select an path for saving images.");
 			FolderBrowserDialog dialog = new FolderBrowserDialog();
 			if (dialog.ShowDialog() == DialogResult.OK) {
 				path = dialog.SelectedPath;
