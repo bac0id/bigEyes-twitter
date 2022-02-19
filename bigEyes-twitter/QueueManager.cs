@@ -26,6 +26,7 @@ namespace BigEyes {
 		public QueueManager(string bindFilename) {
 			this.Tasks = new HashSet<string>();
 			this.filename = bindFilename;
+			SaveToFile();
 			LoadFromFile();
 		}
 
