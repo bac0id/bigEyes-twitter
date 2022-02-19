@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -7,50 +9,68 @@ using System.Windows.Forms;
 namespace BigEyes {
 	public partial class FormMain : Form {
 
-		private const string FILENAME_SETTING = "Setting.txt";
-		private const string FILENAME_LOG = "Log.txt";
-		private int TaskNum {
-			get {
-				return this._taskNum;
-			}
-			set {
-				this._taskNum = value;
-				this.lbl1.Text = _taskNum.ToString();
-			}
-		}
-		private string path;
-		private int _taskNum = 0;
-		private LogWriter logWriter = new LogWriter(FILENAME_LOG);
+		private const string Filename_Config = "Setting.txt";
+		private const string Filename_Log = "Log.txt";
+		private const string Filename_Failed_Tasks = "Failed.txt";
+
+		// 保存图片的路径
+		private string savePath;
+
+		private QueueManager qm;
+		private LogWriter logWriter = new LogWriter(Filename_Log);
 		private IImageSaver saver;
 
 		public FormMain() {
 			this.InitializeComponent();
 			CheckForIllegalCrossThreadCalls = false;
-			this.LoadConfig();
-			this.saver = new ImageSaver(this.path);
-		}
 
-		/// <summary>
-		/// 读取设置
-		/// </summary>
-		private void LoadConfig() {
-			//读取路径设置
-			if (File.Exists(FILENAME_SETTING)) {
-				StreamReader sr = new StreamReader(FILENAME_SETTING);
-				//只读1行作为保存路径
-				this.path = sr.ReadLine();
-				sr.Close();
-			} else {
-				InitConfig();
+			this.LoadOrInitConfig();
+
+			this.saver = new ImageSaver(this.savePath);
+
+			this.qm = new QueueManager(Filename_Failed_Tasks);
+			this.qm.OnTaskCountChanged += (cnt) => this.lblTaskNum.Text = cnt.ToString();
+			if (true) {
+				RestartFailedTasks();
 			}
 		}
 
+		private void LoadOrInitConfig() {
+			// 读取设置路径
+			if (File.Exists(Filename_Config) == false) {
+				InitConfig();
+			}
+			LoadConfig();
+		}
+
+		/// <summary>
+		/// 读取配置文件
+		/// </summary>
+		private void LoadConfig() {
+			StreamReader sr = new StreamReader(Filename_Config);
+			//只读1行作为保存路径
+			this.savePath = sr.ReadLine();
+			sr.Close();
+		}
+
+		/// <summary>
+		/// 初始化配置文件
+		/// </summary>
 		private void InitConfig() {
-			this.path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-			byte[] array = Encoding.Default.GetBytes(path);
-			FileStream fs = new FileStream(FILENAME_SETTING, FileMode.Create);
-			fs.Write(array, 0, array.Length);
-			fs.Close();
+			string savePath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+			StreamWriter sw = new StreamWriter(Filename_Config);
+			sw.WriteLine(savePath);
+			sw.Close();
+			//byte[] array = Encoding.Default.GetBytes(path);
+			//FileStream fs = new FileStream(Filename_Config, FileMode.Create);
+			//fs.Write(array, 0, array.Length);
+			//fs.Close();
+		}
+
+		private void RestartFailedTasks() {
+			foreach (string str in qm.Tasks) {
+				TryAddNewTask(str);
+			}
 		}
 
 		private void NotifyIllegalInput() {
@@ -75,25 +95,30 @@ namespace BigEyes {
 		private void btnSave_Click(object sender, EventArgs e) {
 			if (Clipboard.ContainsText()) {
 				string str = Clipboard.GetText();
-				try {
-					Twimage tw = new Twimage(str);
-					tw.OnComplete += () => {
-						this.logWriter.WriteLine("OK", tw.FileName);
-						this.saver.Save(tw.Image, tw.FileName);
-						this.TaskNum--;
-					};
-					tw.Fetch();
-					this.TaskNum++;
-				}
-				catch (ArgumentException ex) {
-					NotifyIllegalInput();
-				}
-				catch (Exception ex) {
-					this.logWriter.WriteLine("Ex", ex.Message);
-				}
+				TryAddNewTask(str);
 			} else {
 				NotifyIllegalInput();
 			}
+		}
+
+		private void TryAddNewTask(string str) {
+			try {
+				TwimageTask tw = new TwimageTask(str);
+				tw.OnComplete += () => {
+					this.logWriter.WriteLine("O", tw.FileName);
+					this.saver.Save(tw.Image, tw.FileName);
+					this.qm.Remove(tw.Url);
+				};
+				this.qm.Add(tw.Url);
+				tw.Fetch();
+			}
+			catch (ArgumentException ex) {
+				NotifyIllegalInput();
+			}
+			catch (Exception ex) {
+				this.logWriter.WriteLine("-", ex.Message + ex.StackTrace);
+			}
+
 		}
 
 		private void ckbTop_CheckedChanged(object sender, EventArgs e) {
@@ -104,15 +129,16 @@ namespace BigEyes {
 			MessageBox.Show("设置保存图片路径。Select an path for saving images.");
 			FolderBrowserDialog dialog = new FolderBrowserDialog();
 			if (dialog.ShowDialog() == DialogResult.OK) {
-				path = dialog.SelectedPath;
-				using (StreamWriter sw = new StreamWriter(FILENAME_SETTING, true)) {
-					sw.WriteLine(path);
+				savePath = dialog.SelectedPath;
+				using (StreamWriter sw = new StreamWriter(Filename_Config, true)) {
+					sw.WriteLine(savePath);
 				}
 			}
 		}
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
 			logWriter.Close();
+			qm.SaveToFile();
 		}
 
 		private void btnCopyUrl_Click(object sender, EventArgs e) {
@@ -131,7 +157,7 @@ namespace BigEyes {
 		}
 
 		private void btnLog_Click(object sender, EventArgs e) {
-			Process.Start(FILENAME_LOG);
+			Process.Start(Filename_Log);
 		}
 	}
 }

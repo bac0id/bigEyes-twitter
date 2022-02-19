@@ -33,7 +33,7 @@
 			this.ckbTop = new System.Windows.Forms.CheckBox();
 			this.btnSave = new System.Windows.Forms.Button();
 			this.btnOptions = new System.Windows.Forms.Button();
-			this.lbl1 = new System.Windows.Forms.Label();
+			this.lblTaskNum = new System.Windows.Forms.Label();
 			this.btnLog = new System.Windows.Forms.Button();
 			this.lbl2 = new System.Windows.Forms.Label();
 			this.btnCopyUrl = new System.Windows.Forms.Button();
@@ -88,14 +88,14 @@
 			// 
 			// lbl1
 			// 
-			this.lbl1.BackColor = System.Drawing.SystemColors.Control;
-			this.lbl1.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.lbl1.Location = new System.Drawing.Point(62, 48);
-			this.lbl1.Name = "lbl1";
-			this.lbl1.Size = new System.Drawing.Size(56, 17);
-			this.lbl1.TabIndex = 5;
-			this.lbl1.Text = "0";
-			this.lbl1.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.lblTaskNum.BackColor = System.Drawing.SystemColors.Control;
+			this.lblTaskNum.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.lblTaskNum.Location = new System.Drawing.Point(62, 48);
+			this.lblTaskNum.Name = "lbl1";
+			this.lblTaskNum.Size = new System.Drawing.Size(56, 17);
+			this.lblTaskNum.TabIndex = 5;
+			this.lblTaskNum.Text = "0";
+			this.lblTaskNum.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// btnLog
 			// 
@@ -139,7 +139,7 @@
 			this.Controls.Add(this.btnCopyUrl);
 			this.Controls.Add(this.lbl2);
 			this.Controls.Add(this.btnLog);
-			this.Controls.Add(this.lbl1);
+			this.Controls.Add(this.lblTaskNum);
 			this.Controls.Add(this.btnOptions);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.ckbTop);
@@ -166,7 +166,7 @@
 		private System.Windows.Forms.CheckBox ckbTop;
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Button btnOptions;
-		private System.Windows.Forms.Label lbl1;
+		private System.Windows.Forms.Label lblTaskNum;
 		private System.Windows.Forms.Button btnLog;
 		private System.Windows.Forms.Label lbl2;
 		private System.Windows.Forms.Button btnCopyUrl;

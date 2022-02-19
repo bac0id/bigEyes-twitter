@@ -6,8 +6,8 @@ namespace BigEyes {
 	/// 写日志
 	/// </summary>
 	class LogWriter {
-		//输出的格式是：时间:[标记]内容
-		private static readonly string DefaultLogFormat = "{0}:[{1}]{2}";
+		//输出的格式是：	时间:[标记]内容
+		private const string DefaultLogFormat = "{0}:[{1}]{2}";
 		private readonly StreamWriter sw;
 
 		public LogWriter(string outputFileName) {

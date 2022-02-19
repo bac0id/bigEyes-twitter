@@ -5,18 +5,19 @@ namespace BigEyes {
 	/// <summary>
 	/// 推特图片
 	/// </summary>
-	class Twimage {
+	class TwimageTask {
 		public event Action OnComplete = null;
 		public event Action<Exception> OnError = null;
 
 		private readonly TwimageUrlParser parser;
 
 		public Image Image { get; private set; } = null;
-		public string Id { get => this.parser.Id; }
-		public string Extension { get => this.parser.Extension; }
-		public string FileName { get => this.parser.FileName; }
+		public string Id => this.parser.Id; 
+		public string Extension=> this.parser.Extension; 
+		public string FileName  => this.parser.FileName; 
+		public string Url => this.parser.Url;
 
-		public Twimage(string url) {
+		public TwimageTask(string url) {
 			try {
 				this.parser = new TwimageUrlParser(url);
 			}
@@ -25,7 +26,7 @@ namespace BigEyes {
 			}
 		}
 
-		public Twimage(TwimageUrlParser parser) {
+		public TwimageTask(TwimageUrlParser parser) {
 			this.parser = parser;
 		}
 
