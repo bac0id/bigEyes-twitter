@@ -6,6 +6,7 @@ namespace BigEyes {
 
 		public ImageSaver(string path) {
 			this.Path = path;
+			if (Path.EndsWith("/") == false) Path += "/";
 		}
 
 		public void Save(Image image, string fileName) {
