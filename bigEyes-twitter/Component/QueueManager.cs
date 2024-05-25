@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace BigEyes {
+namespace BigEyes.Component {
 	class QueueManager {
 
-		public event Action<int> OnTaskCountChanged = null;
-		public HashSet<string> Tasks { get; private set; }
+		public event Action<int> OnTaskCountChanged;
+
 		private string filename;
+
+		public HashSet<string> Tasks { get; private set; }
 
 		public bool Add(string task) {
 			bool ok = Tasks.Add(task);
-			OnTaskCountChanged.Invoke(Tasks.Count);
+			if(OnTaskCountChanged != null) {
+				OnTaskCountChanged.Invoke(Tasks.Count);
+			}
 			return ok;
 		}
 
@@ -21,21 +25,19 @@ namespace BigEyes {
 			return ok;
 		}
 
-		public int Count => this.Tasks.Count;
-
 		public QueueManager(string bindFilename) {
-			this.Tasks = new HashSet<string>();
-			this.filename = bindFilename;
-			SaveToFile();
+			Tasks = new HashSet<string>();
+			filename = bindFilename;
 			LoadFromFile();
 		}
 
 		private void LoadFromFile() {
 			StreamReader sr = new StreamReader(filename);
-			for (; ; ) {
+			for (; ; )
+			{
 				string line = sr.ReadLine();
 				if (line == null) break;
-				Tasks.Add(line);
+				Add(line);
 			}
 			sr.Close();
 		}

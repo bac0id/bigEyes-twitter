@@ -1,27 +1,25 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace BigEyes {
+namespace BigEyes.Core {
 	/// <summary>
 	/// 推特图片
 	/// </summary>
-	class TwimageTask {
+	public class TwimageTask {
 		public event Action OnComplete = null;
 		public event Action<Exception> OnError = null;
 
 		private readonly TwimageUrlParser parser;
 
 		public Image Image { get; private set; } = null;
-		public string Id => this.parser.Id; 
-		public string Extension=> this.parser.Extension; 
-		public string FileName  => this.parser.FileName; 
-		public string Url => this.parser.Url;
+		public string Id => this.parser.Id;
+		public string Extension => this.parser.Extension;
+		public string FileName => this.parser.Name;
+		public string Url => this.parser.OriginalImageUrl;
 
 		public TwimageTask(string url) {
 			try {
 				this.parser = new TwimageUrlParser(url);
-			}
-			catch (ArgumentException argEx) {
+			} catch (ArgumentException argEx) {
 				this.OnError?.Invoke(argEx);
 			}
 		}
@@ -35,7 +33,7 @@ namespace BigEyes {
 		/// </summary>
 		public void Fetch() {
 			Downloader dl = new Downloader(
-				this.parser.Url,
+				this.parser.OriginalImageUrl,
 				onComplete => {
 					this.Image = Image.FromStream(onComplete);
 					this.OnComplete.Invoke();
@@ -44,7 +42,7 @@ namespace BigEyes {
 					//this.OnError.Invoke(onException);
 				}
 			);
-			dl.ParallelFetch();
+			dl.StartDownloadAsync();
 		}
 
 

@@ -1,3 +1,8 @@
 .vs/
 bigEyes-twitter/bin
 bigEyes-twitter/obj
+bigEyes-twitter-core/bin
+bigEyes-twitter-core/obj
+bigEyes-twitter-test/bin
+bigEyes-twitter-test/obj
+TestResults/
