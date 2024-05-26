@@ -14,6 +14,5 @@ An winform app for downloading origin images on X (Twitter).
 ![screenshot-config](screenshots/screenshot-v2.0.0.0-2.png)
 
 ## Lisense
-License
 This repository is under MIT License.
-The icon image of this executive file is consisted by a blue bird and an eye. The blue bird was a trademark of [X](https://x.com) and the eye is an emoji of (Twemoji)[https://github.com/twitter/twemoji].
+The icon image of this executive file is consisted by a blue bird and an eye. The blue bird was a trademark of [X](https://x.com) and the eye is an emoji of [Twemoji](https://github.com/twitter/twemoji).
